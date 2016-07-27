@@ -1,0 +1,8 @@
+<ion-header>
+</ion-header>
+
+<ion-content padding class="home">
+  <div *ngIf="womp" class="container">
+    <img [ngClass]="{'shake-rotate': canIShake }" src="{{womp.img}}" (click)="playWomp(womp)" >
+  </div>
+</ion-content>
