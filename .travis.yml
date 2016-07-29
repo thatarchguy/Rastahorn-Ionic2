@@ -1,0 +1,8 @@
+language: node_js
+before_install:
+- npm install -g npm
+- npm install -g cordova gulp ionic@beta
+script:
+- npm install
+- ionic platform add android
+- gulp build
