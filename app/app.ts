@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
 import {Platform, ionicBootstrap} from 'ionic-angular';
-import {StatusBar} from 'ionic-native';
+import {StatusBar, Splashscreen} from 'ionic-native';
 import {HomePage} from './pages/home/home';
 import {WompService} from './services/womp.service';
 
@@ -20,9 +20,20 @@ export class MyApp {
     platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
+      this.hideSplashScreen();
       StatusBar.styleDefault();
     });
   }
+
+
+  hideSplashScreen() {
+    if (Splashscreen) {
+        setTimeout(() => {
+          Splashscreen.hide();
+        }, 1000);
+    }
+  }
+
 }
 
 ionicBootstrap(MyApp);
