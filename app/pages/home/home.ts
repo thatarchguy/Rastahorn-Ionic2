@@ -22,8 +22,7 @@ export class HomePage {
     platform:Platform,
     public wompService: WompService){
       platform.ready().then(() => {
-        var subscription = DeviceMotion.watchAcceleration({frequency:200}).subscribe(acc => {
-          //console.log(acc);
+        var subscription = DeviceMotion.watchAcceleration({frequency:220}).subscribe(acc => {
 
           if(!this.lastX) {
             this.lastX = acc.x;
@@ -37,13 +36,13 @@ export class HomePage {
           deltaY = Math.abs(acc.y-this.lastY);
           deltaZ = Math.abs(acc.z-this.lastZ);
 
-          if(deltaX + deltaY + deltaZ > 3) {
+          if(deltaX + deltaY + deltaZ > 9) {
             this.moveCounter++;
           } else {
             this.moveCounter = Math.max(0, --this.moveCounter);
           }
 
-          if(this.moveCounter > 2) {
+          if(this.moveCounter > 3) {
             console.log('WOMP WOMP WOMP');
             this.playWomp(this.womp);
             this.moveCounter=0;
