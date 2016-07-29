@@ -1,7 +1,8 @@
 import {Component} from '@angular/core';
-import {NavController} from 'ionic-angular';
+import {NavController,Platform} from 'ionic-angular';
 import {WompService} from '../../services/womp.service';
 import {Womp} from '../../services/womp.model';
+import {DeviceMotion} from 'ionic-native';
 
 @Component({
   templateUrl: 'build/pages/home/home.html'
@@ -10,16 +11,53 @@ import {Womp} from '../../services/womp.model';
 export class HomePage {
   womp: Womp;
   public canIShake = false;
+  public id = 1;
+  private lastX:number;
+  private lastY:number;
+  private lastZ:number;
+  private moveCounter:number = 0;
 
   constructor(
     private navController: NavController,
-    private wompService: WompService) {
-      this.wompService = wompService;
-  }
+    platform:Platform,
+    public wompService: WompService){
+      platform.ready().then(() => {
+        var subscription = DeviceMotion.watchAcceleration({frequency:220}).subscribe(acc => {
+
+          if(!this.lastX) {
+            this.lastX = acc.x;
+            this.lastY = acc.y;
+            this.lastZ = acc.z;
+            return;
+          }
+
+          let deltaX:number, deltaY:number, deltaZ:number;
+          deltaX = Math.abs(acc.x-this.lastX);
+          deltaY = Math.abs(acc.y-this.lastY);
+          deltaZ = Math.abs(acc.z-this.lastZ);
+
+          if(deltaX + deltaY + deltaZ > 9) {
+            this.moveCounter++;
+          } else {
+            this.moveCounter = Math.max(0, --this.moveCounter);
+          }
+
+          if(this.moveCounter > 3) {
+            console.log('WOMP WOMP WOMP');
+            this.playWomp(this.womp);
+            this.moveCounter=0;
+          }
+
+          this.lastX = acc.x;
+          this.lastY = acc.y;
+          this.lastZ = acc.z;
+
+        });
+      });
+    }
 
   ngOnInit() {
-    let id = 1;
-    this.wompService.getById(id).then(womp => this.womp = womp);
+    this.wompService.getById(this.id).then(womp => this.womp = womp);
     console.log(this.womp);
   }
   playWomp(womp) {
